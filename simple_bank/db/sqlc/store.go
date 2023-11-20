@@ -49,12 +49,15 @@ type TransferTxResult struct {
 	ToEntry     Entry    `json:"toEntry"`
 }
 
+var txKey = struct{}{}
+
 // creates a transfer record, account entries and updates accounts' balance within a transaction.
 func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
+		fmt.Print(ctx.Value(txKey))
 		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountId: arg.FromAccountID,
 			ToAccountId:   arg.ToAccountID,
@@ -63,6 +66,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		if err != nil {
 			return err
 		}
+
 		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountId: arg.FromAccountID,
 			Amount:    -arg.Amount,
@@ -78,6 +82,22 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 		//TODO: update accounts' balance
+
+		result.FromAccount, err = q.AddAmountAccount(ctx, AddAmountAccountParams{
+			ID:     arg.FromAccountID,
+			Amount: -arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.ToAccount, err = q.AddAmountAccount(ctx, AddAmountAccountParams{
+			ID:     arg.ToAccountID,
+			Amount: arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	return result, err
