@@ -10,7 +10,7 @@ import (
 
 type createAccountRequest struct {
 	Owner    string `json:"owner" binding:"required,min=1"`
-	Currency string `json:"currency" binding:"required,oneof=USD EUR CAD GBP YEN AUD"`
+	Currency string `json:"currency" binding:"required,currency"`
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
@@ -81,8 +81,8 @@ func (server *Server) getAccounts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, accounts)
 }
 
-type updateAccountRequest struct { 
-	Amount int64  `json:"amount" binding:"required,gte=0"`
+type updateAccountRequest struct {
+	Amount int64 `json:"amount" binding:"required,gte=0"`
 }
 
 func (server *Server) updateAccount(ctx *gin.Context) {
@@ -109,9 +109,8 @@ func (server *Server) updateAccount(ctx *gin.Context) {
 
 }
 
-
 func (server *Server) deleteAccount(ctx *gin.Context) {
-	var req  getAccountRequest
+	var req getAccountRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
