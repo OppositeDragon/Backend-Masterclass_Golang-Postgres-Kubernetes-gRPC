@@ -36,13 +36,73 @@ func CreateRandomUser(t *testing.T) User {
 	return user
 }
 
+func CreateRandomNullFieldsUser(t *testing.T) User {
+	arg := CreateUserParams{
+		Username:       util.RandomUsername(),
+		Name1:          util.RandomUsername(),
+		Name2:          sql.NullString{ },
+		Lastname1:      util.RandomUsername(),
+		Lastname2:      sql.NullString{ },
+		Email:          util.RandomEmail(),
+		HashedPassword: "",
+	}
+
+	user, err := testQueries.CreateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, user)
+	require.Equal(t, arg.Username, user.Username)
+	require.Equal(t, arg.Name1, user.Name1)
+	require.Equal(t, arg.Name2, user.Name2)
+	require.Equal(t, arg.Lastname1, user.Lastname1)
+	require.Equal(t, arg.Lastname2, user.Lastname2)
+	require.Equal(t, arg.Email, user.Email)
+	require.Equal(t, arg.HashedPassword, user.HashedPassword)
+	require.NotZero(t, user.PasswordChangedAt)
+	require.NotZero(t, user.CreatedAt)
+	return user
+}
+
 func TestCreateUser(t *testing.T) {
 	CreateRandomUser(t)
+}
+func TestCreateNullFieldsUser(t *testing.T) {
+	CreateRandomNullFieldsUser(t)
 }
 
 func TestGetUser(t *testing.T) {
 	user1 := CreateRandomUser(t)
 	user2, err := testQueries.GetUser(context.Background(), user1.Username)
+	require.NoError(t, err)
+	require.NotEmpty(t, user2)
+	require.Equal(t, user1.Username, user2.Username)
+	require.Equal(t, user1.Name1, user2.Name1)
+	require.Equal(t, user1.Name2, user2.Name2)
+	require.Equal(t, user1.Lastname1, user2.Lastname1)
+	require.Equal(t, user1.Lastname2, user2.Lastname2)
+	require.Equal(t, user1.Email, user2.Email)
+	require.Equal(t, user1.HashedPassword, user2.HashedPassword)
+	require.WithinDuration(t, user1.PasswordChangedAt, user2.PasswordChangedAt, time.Second)
+	require.WithinDuration(t, user1.CreatedAt, user2.CreatedAt, time.Second)
+}
+func TestGetNullFieldsUser(t *testing.T) {
+	user1 := CreateRandomNullFieldsUser(t)
+	user2, err := testQueries.GetUser(context.Background(), user1.Username)
+	require.NoError(t, err)
+	require.NotEmpty(t, user2)
+	require.Equal(t, user1.Username, user2.Username)
+	require.Equal(t, user1.Name1, user2.Name1)
+	require.Equal(t, user1.Name2, user2.Name2)
+	require.Equal(t, user1.Lastname1, user2.Lastname1)
+	require.Equal(t, user1.Lastname2, user2.Lastname2)
+	require.Equal(t, user1.Email, user2.Email)
+	require.Equal(t, user1.HashedPassword, user2.HashedPassword)
+	require.WithinDuration(t, user1.PasswordChangedAt, user2.PasswordChangedAt, time.Second)
+	require.WithinDuration(t, user1.CreatedAt, user2.CreatedAt, time.Second)
+}
+
+func TestGetUserByEmail(t *testing.T) {
+	user1 := CreateRandomUser(t)
+	user2, err := testQueries.GetUserByEmail(context.Background(), user1.Email)
 	require.NoError(t, err)
 	require.NotEmpty(t, user2)
 	require.Equal(t, user1.Username, user2.Username)
