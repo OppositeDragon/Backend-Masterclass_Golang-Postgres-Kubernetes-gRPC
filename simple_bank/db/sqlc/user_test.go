@@ -11,6 +11,8 @@ import (
 )
 
 func CreateRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
 	arg := CreateUserParams{
 		Username:       util.RandomUsername(),
 		Name1:          util.RandomUsername(),
@@ -18,7 +20,7 @@ func CreateRandomUser(t *testing.T) User {
 		Lastname1:      util.RandomUsername(),
 		Lastname2:      sql.NullString{String: util.RandomUsername(), Valid: true},
 		Email:          util.RandomEmail(),
-		HashedPassword: "",
+		HashedPassword: hashedPassword,
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)
@@ -37,14 +39,16 @@ func CreateRandomUser(t *testing.T) User {
 }
 
 func CreateRandomNullFieldsUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
 	arg := CreateUserParams{
 		Username:       util.RandomUsername(),
 		Name1:          util.RandomUsername(),
-		Name2:          sql.NullString{ },
+		Name2:          sql.NullString{},
 		Lastname1:      util.RandomUsername(),
-		Lastname2:      sql.NullString{ },
+		Lastname2:      sql.NullString{},
 		Email:          util.RandomEmail(),
-		HashedPassword: "",
+		HashedPassword: hashedPassword,
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)
