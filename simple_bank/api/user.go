@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 	db "simple_bank/db/sqlc"
 	util "simple_bank/util"
@@ -10,16 +9,7 @@ import (
 	"github.com/lib/pq"
 )
 
-// type createUserRequest struct {
-// 	Username  string `json:"username" binding:"required,alphanum,min=3,max=24"`
-// 	Name1     string `json:"name1" binding:"required,min=2"`
-// 	Name2     string `json:"name2"`
-// 	Lastname1 string `json:"lastname1" binding:"required,min=2"`
-// 	Lastname2 string `json:"lastname2"`
-// 	Email     string `json:"email" binding:"required,email"`
-// 	Password  string `json:"password" binding:"required,alphanum,min=8,max=60"`
-// }
-type createUserDto struct {
+type createUserRequest struct {
 	Username  string  `json:"username" binding:"required,alphanum,min=3,max=24"`
 	Name1     string  `json:"name1" binding:"required,min=2"`
 	Name2     *string `json:"name2"`
@@ -28,38 +18,36 @@ type createUserDto struct {
 	Email     string  `json:"email" binding:"required,email"`
 	Password  string  `json:"password" binding:"required,alphanum,min=8,max=60"`
 }
+type createUserResponse struct {
+	Username  string  `json:"username" binding:"required,alphanum,min=3,max=24"`
+	Name1     string  `json:"name1" binding:"required,min=2"`
+	Name2     *string `json:"name2"`
+	Lastname1 string  `json:"lastname1" binding:"required,min=2"`
+	Lastname2 *string `json:"lastname2"`
+	Email     string  `json:"email" binding:"required,email"`
+}
 
 func (server *Server) createUser(ctx *gin.Context) {
-	var req createUserDto
+	var req createUserRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
 	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	var name2 sql.NullString
-	if req.Name2 != nil {
-		name2 = sql.NullString{String: *req.Name2, Valid: true}
-	}
-	var lastname2 sql.NullString
-	if req.Lastname2 != nil {
-		lastname2 = sql.NullString{String: *req.Lastname2, Valid: true}
-	}
 	arg := db.CreateUserParams{
 		Username:       req.Username,
 		Name1:          req.Name1,
-		Name2:          name2,
+		Name2:          util.StringPtrToSqlNullString(req.Name2),
 		Lastname1:      req.Lastname1,
-		Lastname2:      lastname2,
+		Lastname2:      util.StringPtrToSqlNullString(req.Lastname2),
 		Email:          req.Email,
 		HashedPassword: hashedPassword,
 	}
-
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
 		if pqErr, value := err.(*pq.Error); value {
@@ -72,28 +60,14 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	responseUser := createUserDto{
+	responseUser := createUserResponse{
 		Username:  user.Username,
 		Name1:     user.Name1,
+		Name2:     util.SqlNullStringToStringPtr(user.Name2),
 		Lastname1: user.Lastname1,
+		Lastname2: util.SqlNullStringToStringPtr(user.Lastname2),
 		Email:     user.Email,
-		Password:  user.HashedPassword,
 	}
-	responseUser.Name2 = func() *string {
-		if user.Name2.Valid {
-			return &user.Name2.String
-		} else {
-			return nil
-		}
-	}()
-	responseUser.Lastname2 = func() *string {
-		if user.Lastname2.Valid {
-			return &user.Lastname2.String
-		} else {
-			return nil
-		}
-	}()
 	ctx.JSON(http.StatusOK, responseUser)
 }
 
