@@ -10,16 +10,16 @@ import (
 	"github.com/lib/pq"
 )
 
-type createUserRequest struct {
-	Username  string `json:"username" binding:"required,alphanum,min=3,max=24"`
-	Name1     string `json:"name1" binding:"required,min=2"`
-	Name2     string `json:"name2"`
-	Lastname1 string `json:"lastname1" binding:"required,min=2"`
-	Lastname2 string `json:"lastname2"`
-	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required,alphanum,min=8,max=60"`
-}
-type createUserResponse struct {
+// type createUserRequest struct {
+// 	Username  string `json:"username" binding:"required,alphanum,min=3,max=24"`
+// 	Name1     string `json:"name1" binding:"required,min=2"`
+// 	Name2     string `json:"name2"`
+// 	Lastname1 string `json:"lastname1" binding:"required,min=2"`
+// 	Lastname2 string `json:"lastname2"`
+// 	Email     string `json:"email" binding:"required,email"`
+// 	Password  string `json:"password" binding:"required,alphanum,min=8,max=60"`
+// }
+type createUserDto struct {
 	Username  string  `json:"username" binding:"required,alphanum,min=3,max=24"`
 	Name1     string  `json:"name1" binding:"required,min=2"`
 	Name2     *string `json:"name2"`
@@ -30,7 +30,7 @@ type createUserResponse struct {
 }
 
 func (server *Server) createUser(ctx *gin.Context) {
-	var req createUserRequest
+	var req createUserDto
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -43,13 +43,12 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 	var name2 sql.NullString
-	if req.Name2 != "" {
-		name2 = sql.NullString{String: req.Name2, Valid: true}
-
+	if req.Name2 != nil {
+		name2 = sql.NullString{String: *req.Name2, Valid: true}
 	}
 	var lastname2 sql.NullString
-	if req.Lastname2 != "" {
-		lastname2 = sql.NullString{String: req.Lastname2, Valid: true}
+	if req.Lastname2 != nil {
+		lastname2 = sql.NullString{String: *req.Lastname2, Valid: true}
 	}
 	arg := db.CreateUserParams{
 		Username:       req.Username,
@@ -74,7 +73,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	responseUser := createUserResponse{
+	responseUser := createUserDto{
 		Username:  user.Username,
 		Name1:     user.Name1,
 		Lastname1: user.Lastname1,
