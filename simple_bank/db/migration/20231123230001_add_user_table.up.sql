@@ -1,5 +1,3 @@
-ALTER TABLE "account" RENAME COLUMN "username" TO "username";
-
 CREATE TABLE "user" (
   "username" varchar PRIMARY KEY,
   "name1" varchar NOT NULL,
