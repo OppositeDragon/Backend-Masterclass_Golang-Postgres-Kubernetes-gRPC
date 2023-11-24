@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS "account";
 
 CREATE TABLE "account" (
   "id" bigserial PRIMARY KEY,
-  "owner" varchar NOT NULL,
+  "username" varchar NOT NULL,
   "currency" varchar NOT NULL,
   "balance" bigint NOT NULL,
   "createdAt" timestamptz NOT NULL DEFAULT (now())
@@ -25,7 +25,7 @@ CREATE TABLE "transfer" (
   "createdAt" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE INDEX ON "account" ("owner");
+CREATE INDEX ON "account" ("username");
 
 CREATE INDEX ON "entry" ("accountId");
 

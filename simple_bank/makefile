@@ -2,7 +2,7 @@ postgres:
 		docker run --name postgres12 -p 7999:5432 -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=root -d postgres:12-alpine
 
 createdb:
-		docker exec -it postgres12 createdb --username=root --owner=root simple_bank
+		docker exec -it postgres12 createdb --username=root --username=root simple_bank
 
 dropdb:
 		docker exec -it postgres12 dropdb simple_bank

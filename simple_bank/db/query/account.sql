@@ -1,5 +1,5 @@
 -- name: CreateAccount :one
-insert into account(owner, balance, currency)
+insert into account(username, balance, currency)
 values($1, $2, $3)
 RETURNING *;
 

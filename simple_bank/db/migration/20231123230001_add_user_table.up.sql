@@ -1,4 +1,4 @@
-ALTER TABLE "account" RENAME COLUMN "owner" TO "username";
+ALTER TABLE "account" RENAME COLUMN "username" TO "username";
 
 CREATE TABLE "user" (
   "username" varchar PRIMARY KEY,
@@ -9,7 +9,7 @@ CREATE TABLE "user" (
   "email" varchar UNIQUE NOT NULL,
   "hashedPassword" varchar NOT NULL,
   "passwordChangedAt" timestamptz NOT NULL DEFAULT (now()),
-  "createdAt" timestamptz
+  "createdAt" timestamptz NOT NULL DEFAULT (now())
 );
 
 

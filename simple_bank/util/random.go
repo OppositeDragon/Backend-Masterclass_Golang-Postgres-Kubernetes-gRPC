@@ -26,7 +26,7 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-func RandomOwner() string {
+func RandomUsername() string {
 	return RandomString(6)
 }
 func RandomMoney() int64 {
@@ -36,4 +36,7 @@ func RandomCurrency() string {
 	currencies := getCurrencies()
 	n := len(currencies)
 	return currencies[rand.Intn(n)]
+}
+func RandomEmail() string {
+	return RandomString(6) + "@email.com"
 }

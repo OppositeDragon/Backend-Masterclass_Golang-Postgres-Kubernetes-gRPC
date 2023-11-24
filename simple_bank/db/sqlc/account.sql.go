@@ -13,7 +13,7 @@ const addAmountAccount = `-- name: AddAmountAccount :one
 update account
 set balance = balance + $2
 where id = $1
-RETURNING id, owner, currency, balance, "createdAt"
+RETURNING id, username, currency, balance, "createdAt"
 `
 
 type AddAmountAccountParams struct {
@@ -26,7 +26,7 @@ func (q *Queries) AddAmountAccount(ctx context.Context, arg AddAmountAccountPara
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Owner,
+		&i.Username,
 		&i.Currency,
 		&i.Balance,
 		&i.CreatedAt,
@@ -35,23 +35,23 @@ func (q *Queries) AddAmountAccount(ctx context.Context, arg AddAmountAccountPara
 }
 
 const createAccount = `-- name: CreateAccount :one
-insert into account(owner, balance, currency)
+insert into account(username, balance, currency)
 values($1, $2, $3)
-RETURNING id, owner, currency, balance, "createdAt"
+RETURNING id, username, currency, balance, "createdAt"
 `
 
 type CreateAccountParams struct {
-	Owner    string `json:"owner"`
+	Username string `json:"username"`
 	Balance  int64  `json:"balance"`
 	Currency string `json:"currency"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.Owner, arg.Balance, arg.Currency)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.Username, arg.Balance, arg.Currency)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Owner,
+		&i.Username,
 		&i.Currency,
 		&i.Balance,
 		&i.CreatedAt,
@@ -70,7 +70,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-select id, owner, currency, balance, "createdAt"
+select id, username, currency, balance, "createdAt"
 from account
 where id = $1
 limit 1
@@ -81,7 +81,7 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Owner,
+		&i.Username,
 		&i.Currency,
 		&i.Balance,
 		&i.CreatedAt,
@@ -90,7 +90,7 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const getAccountForUpdate = `-- name: GetAccountForUpdate :one
-select id, owner, currency, balance, "createdAt"
+select id, username, currency, balance, "createdAt"
 from account
 where id = $1
 limit 1
@@ -102,7 +102,7 @@ func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, e
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Owner,
+		&i.Username,
 		&i.Currency,
 		&i.Balance,
 		&i.CreatedAt,
@@ -111,7 +111,7 @@ func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, e
 }
 
 const getAccounts = `-- name: GetAccounts :many
-select id, owner, currency, balance, "createdAt"
+select id, username, currency, balance, "createdAt"
 from account
 order by id
 limit $1 offset $2
@@ -133,7 +133,7 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Acc
 		var i Account
 		if err := rows.Scan(
 			&i.ID,
-			&i.Owner,
+			&i.Username,
 			&i.Currency,
 			&i.Balance,
 			&i.CreatedAt,
@@ -155,7 +155,7 @@ const updateAccount = `-- name: UpdateAccount :one
 update account
 set balance = $2
 where id = $1
-RETURNING id, owner, currency, balance, "createdAt"
+RETURNING id, username, currency, balance, "createdAt"
 `
 
 type UpdateAccountParams struct {
@@ -168,7 +168,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Owner,
+		&i.Username,
 		&i.Currency,
 		&i.Balance,
 		&i.CreatedAt,
