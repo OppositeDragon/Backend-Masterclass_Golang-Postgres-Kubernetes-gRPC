@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/chacha20poly1305"
 )
 
 var (
-	ErrKeySizeTooSmall   = fmt.Errorf("invalid key size: must be at least %d characters", minSecretKeySize)
-	ErrInvalidToken = errors.New("token is invalid")
-	ErrExpiredToken = errors.New("token has expired")
+	ErrInvalidKeySize  = fmt.Errorf("invalid key size, must be exatly %d characters", chacha20poly1305.KeySize)
+	ErrKeySizeTooSmall = fmt.Errorf("invalid key size: must be at least %d characters", minSecretKeySize)
+	ErrInvalidToken    = errors.New("token is invalid")
+	ErrExpiredToken    = errors.New("token has expired")
 )
 
 type Payload struct {

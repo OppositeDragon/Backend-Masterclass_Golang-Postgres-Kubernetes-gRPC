@@ -38,5 +38,5 @@ func RandomCurrency() string {
 	return currencies[rand.Intn(n)]
 }
 func RandomEmail() string {
-	return RandomString(6) + "@email.com"
+	return RandomString(int(RandomInt(4, 10))) + "@email.com"
 }
