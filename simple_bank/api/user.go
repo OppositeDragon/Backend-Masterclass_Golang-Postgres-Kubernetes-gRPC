@@ -4,6 +4,7 @@ import (
 	"net/http"
 	db "simple_bank/db/sqlc"
 	util "simple_bank/util"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -19,12 +20,14 @@ type createUserRequest struct {
 	Password  string  `json:"password" binding:"required,alphanum,min=8,max=60"`
 }
 type createUserResponse struct {
-	Username  string  `json:"username" binding:"required,alphanum,min=3,max=24"`
-	Name1     string  `json:"name1" binding:"required,min=2"`
-	Name2     *string `json:"name2"`
-	Lastname1 string  `json:"lastname1" binding:"required,min=2"`
-	Lastname2 *string `json:"lastname2"`
-	Email     string  `json:"email" binding:"required,email"`
+	Username          string    `json:"username" binding:"required,alphanum,min=3,max=24"`
+	Name1             string    `json:"name1" binding:"required,min=2"`
+	Name2             *string   `json:"name2"`
+	Lastname1         string    `json:"lastname1" binding:"required,min=2"`
+	Lastname2         *string   `json:"lastname2"`
+	Email             string    `json:"email" binding:"required,email"`
+	PasswordChangedAt time.Time `json:"passwordChangedAt"`
+	CreatedAt         time.Time `json:"createdAt"`
 }
 
 func (server *Server) createUser(ctx *gin.Context) {
@@ -34,6 +37,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+
 	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -48,11 +52,12 @@ func (server *Server) createUser(ctx *gin.Context) {
 		Email:          req.Email,
 		HashedPassword: hashedPassword,
 	}
+
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
 		if pqErr, value := err.(*pq.Error); value {
 			switch pqErr.Code.Name() {
-			case "unique_violation":
+			case "foreign_key_violation", "unique_violation":
 				ctx.JSON(http.StatusForbidden, errorResponse(err))
 				return
 			}
@@ -61,12 +66,14 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 	responseUser := createUserResponse{
-		Username:  user.Username,
-		Name1:     user.Name1,
-		Name2:     util.SqlNullStringToStringPtr(user.Name2),
-		Lastname1: user.Lastname1,
-		Lastname2: util.SqlNullStringToStringPtr(user.Lastname2),
-		Email:     user.Email,
+		Username:          user.Username,
+		Name1:             user.Name1,
+		Name2:             util.SqlNullStringToStringPtr(user.Name2),
+		Lastname1:         user.Lastname1,
+		Lastname2:         util.SqlNullStringToStringPtr(user.Lastname2),
+		Email:             user.Email,
+		PasswordChangedAt: user.PasswordChangedAt,
+		CreatedAt:         user.CreatedAt,
 	}
 	ctx.JSON(http.StatusOK, responseUser)
 }
