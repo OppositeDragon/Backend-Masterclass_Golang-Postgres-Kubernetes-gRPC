@@ -13,15 +13,15 @@ limit 1;
 select *
 from account
 where id = $1
-limit 1
+limit 1 
 for no key update;
 
 -- name: GetAccounts :many
 select *
 from account
+where username = $1
 order by id
-limit $1 offset $2;
-
+limit $2 offset $3;
 -- name: UpdateAccount :one
 update account
 set balance = $2

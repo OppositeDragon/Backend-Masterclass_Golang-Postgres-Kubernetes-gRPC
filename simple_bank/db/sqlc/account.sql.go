@@ -113,17 +113,19 @@ func (q *Queries) GetAccountForUpdate(ctx context.Context, id int64) (Account, e
 const getAccounts = `-- name: GetAccounts :many
 select id, username, currency, balance, "createdAt"
 from account
+where username = $1
 order by id
-limit $1 offset $2
+limit $2 offset $3
 `
 
 type GetAccountsParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	Username string `json:"username"`
+	Limit    int32  `json:"limit"`
+	Offset   int32  `json:"offset"`
 }
 
 func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Account, error) {
-	rows, err := q.db.QueryContext(ctx, getAccounts, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, getAccounts, arg.Username, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
