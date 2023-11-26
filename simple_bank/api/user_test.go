@@ -218,7 +218,7 @@ func TestCreateUserAPI(t *testing.T) {
 }
 
 func randomUser(t *testing.T) (user db.User, password string) {
-	password = util.RandomString(10)
+	password = "secretsecret"
 	hashedPassword, err := util.HashPassword(password)
 	require.NoError(t, err)
 	user = db.User{

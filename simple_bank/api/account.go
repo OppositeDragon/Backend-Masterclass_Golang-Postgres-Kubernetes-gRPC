@@ -72,7 +72,7 @@ func (server *Server) getAccount(ctx *gin.Context) {
 
 type getAccountsRequest struct {
 	Offset *int32 `form:"offset" binding:"required,min=0"`
-	Limit  int32  `form:"limit" binding:"required,min=5,max=100"`
+	Limit  int32  `form:"limit" binding:"required,min=5,max=1000"`
 }
 
 func (server *Server) getAccounts(ctx *gin.Context) {
