@@ -39,7 +39,7 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		return nil, status.Errorf(codes.Internal, "failed to create user")
 	}
 	response := &pb.CreateUserResponse{
-		User: convertuser(user),
+		User: convertUser(user),
 	}
 	return response, nil
 }

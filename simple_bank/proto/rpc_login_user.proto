@@ -3,6 +3,7 @@ syntax = "proto3";
 package pb; 
 
 import "user.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "simple_bank/pb";
 
@@ -12,6 +13,19 @@ message LoginUserRequest {
 }
 
 message LoginUserResponse {
-  string access_token = 1;
-  User user = 2;
+  string sessionId=1;  
+  string accessToken=2;
+  google.protobuf.Timestamp  accessTokenExpiresAt =3;
+  string refreshToken=4;
+  google.protobuf.Timestamp  refreshTokenExpiresAt=5;
+  User user = 6;
+}
+
+message RenewAccessTokenRequest {
+  string refreshToken=1;
+}
+
+message RenewAccessTokenResponse {
+  string accessToken=1;
+  google.protobuf.Timestamp  accessTokenExpiresAt =2;
 }

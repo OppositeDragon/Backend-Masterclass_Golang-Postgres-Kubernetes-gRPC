@@ -9,5 +9,6 @@ option go_package = "simple_bank/pb";
 
 service SimpleBank{
   rpc LoginUser (LoginUserRequest) returns (LoginUserResponse){}
+  rpc RenewAccessToken (RenewAccessTokenRequest) returns (RenewAccessTokenResponse){}
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse){}
 }
