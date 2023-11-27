@@ -93,7 +93,7 @@ const getAccountForUpdate = `-- name: GetAccountForUpdate :one
 select id, username, currency, balance, "createdAt"
 from account
 where id = $1
-limit 1
+limit 1 
 for no key update
 `
 

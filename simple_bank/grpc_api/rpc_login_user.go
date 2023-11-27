@@ -22,7 +22,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid password: %v", err)
 	}
-	accessToken, err := server.tokenMaker.CreateToken(user.Username, server.config.TokenDuration)
+	accessToken,_, err := server.tokenMaker.CreateToken(user.Username, server.config.AccessTokenDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create access token: %v", err)
 	}

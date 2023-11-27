@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	hashedPassword, err := util.HashPassword(req.GetPassword())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
@@ -31,14 +31,15 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		if pqErr, value := err.(*pq.Error); value {
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation":
-				return nil, status.Errorf(codes.AlreadyExists, "username already exists") 
+				return nil, status.Errorf(codes.AlreadyExists, "username already exists")
 			case "unique_violation":
 				return nil, status.Errorf(codes.AlreadyExists, "email already in use")
 			}
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create user")
 	}
-	response :=  convertuser(user)
- 
+	response := &pb.CreateUserResponse{
+		User: convertuser(user),
+	}
 	return response, nil
 }

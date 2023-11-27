@@ -51,6 +51,7 @@ func errorResponse(err error) gin.H {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 	router.POST("/users/login", server.loginUser)
+	router.POST("/users/renew_access", server.renewAccessToken)
 	router.POST("/users", server.createUser)
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutes.POST("/accounts", server.createAccount)

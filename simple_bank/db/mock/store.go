@@ -13,6 +13,7 @@ import (
 	reflect "reflect"
 	db "simple_bank/db/sqlc"
 
+	uuid "github.com/google/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -84,6 +85,21 @@ func (mr *MockStoreMockRecorder) CreateEntry(arg0, arg1 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntry", reflect.TypeOf((*MockStore)(nil).CreateEntry), arg0, arg1)
 }
 
+// CreateSession mocks base method.
+func (m *MockStore) CreateSession(arg0 context.Context, arg1 db.CreateSessionParams) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockStoreMockRecorder) CreateSession(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockStore)(nil).CreateSession), arg0, arg1)
+}
+
 // CreateTransfer mocks base method.
 func (m *MockStore) CreateTransfer(arg0 context.Context, arg1 db.CreateTransferParams) (db.Transfer, error) {
 	m.ctrl.T.Helper()
@@ -140,6 +156,20 @@ func (m *MockStore) DeleteEntry(arg0 context.Context, arg1 int64) error {
 func (mr *MockStoreMockRecorder) DeleteEntry(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEntry", reflect.TypeOf((*MockStore)(nil).DeleteEntry), arg0, arg1)
+}
+
+// DeleteSession mocks base method.
+func (m *MockStore) DeleteSession(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSession", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSession indicates an expected call of DeleteSession.
+func (mr *MockStoreMockRecorder) DeleteSession(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSession", reflect.TypeOf((*MockStore)(nil).DeleteSession), arg0, arg1)
 }
 
 // DeleteTransfer mocks base method.
@@ -243,6 +273,21 @@ func (m *MockStore) GetEntry(arg0 context.Context, arg1 int64) (db.Entry, error)
 func (mr *MockStoreMockRecorder) GetEntry(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockStore)(nil).GetEntry), arg0, arg1)
+}
+
+// GetSession mocks base method.
+func (m *MockStore) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSession indicates an expected call of GetSession.
+func (mr *MockStoreMockRecorder) GetSession(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockStore)(nil).GetSession), arg0, arg1)
 }
 
 // GetTransfer mocks base method.
@@ -363,6 +408,21 @@ func (m *MockStore) UpdateEntry(arg0 context.Context, arg1 db.UpdateEntryParams)
 func (mr *MockStoreMockRecorder) UpdateEntry(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntry", reflect.TypeOf((*MockStore)(nil).UpdateEntry), arg0, arg1)
+}
+
+// UpdateSessionAccess mocks base method.
+func (m *MockStore) UpdateSessionAccess(arg0 context.Context, arg1 db.UpdateSessionAccessParams) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSessionAccess", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateSessionAccess indicates an expected call of UpdateSessionAccess.
+func (mr *MockStoreMockRecorder) UpdateSessionAccess(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSessionAccess", reflect.TypeOf((*MockStore)(nil).UpdateSessionAccess), arg0, arg1)
 }
 
 // UpdateTransfer mocks base method.
